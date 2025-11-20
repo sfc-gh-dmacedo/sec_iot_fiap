@@ -5,21 +5,24 @@
 
 ## 🚀 Setup Rápido (10 minutos)
 
-### 1️⃣ Configurar AWS (5 min)
+### 1️⃣ Configurar AWS
 
+**⚠️ Escolha seu método:**
+
+#### Opção A: COM AWS CLI (5 min - Automático)
 ```bash
-# Clonar/navegar para o projeto
 cd /Users/dmacedo/Documents/Codes/Projects/sec_iot_fiap
-
-# Executar script de setup automático
 ./setup_aws_iot.sh
-
-# ✅ Isso criará:
-# - Certificados X.509
-# - Políticas IoT
-# - Thing (dispositivo)
-# - Arquivo de configuração SQL
 ```
+
+#### Opção B: SEM AWS CLI (30 min - Manual via Console Web)
+📘 **Siga o guia completo**: `SETUP_VIA_CONSOLE_AWS.md`
+
+Ambos criam:
+- ✅ Certificados X.509
+- ✅ Políticas IoT
+- ✅ Thing (dispositivo)
+- ✅ Configuração para Snowflake
 
 ### 2️⃣ Configurar Snowflake (5 min)
 

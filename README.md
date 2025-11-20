@@ -50,6 +50,24 @@ aws configure
 
 ## 🚀 Parte 1: Configuração na AWS
 
+### ⚠️ IMPORTANTE: Escolha Seu Método de Setup
+
+**Você tem 2 opções:**
+
+#### Opção A: Setup Automático (COM acesso ao AWS CLI)
+- Use o script: `./setup_aws_iot.sh`
+- Mais rápido (~5 minutos)
+- Veja instruções abaixo
+
+#### Opção B: Setup Manual (SEM acesso ao AWS CLI - APENAS Console Web)
+- 📘 **Siga o guia completo**: `SETUP_VIA_CONSOLE_AWS.md`
+- Mais detalhado (~30 minutos)
+- Passo a passo com interface web
+
+---
+
+### Opção A: Setup com AWS CLI
+
 ### Passo 1: Obter o Endpoint do AWS IoT
 
 ```bash
