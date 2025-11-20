@@ -1,0 +1,75 @@
+# Certificados e Chaves (NUNCA commitar!)
+aws_iot_certs/
+*.pem
+*.crt
+*.key
+*.p12
+*.pfx
+
+# Configurações sensíveis
+*config*.txt
+*secret*
+*password*
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Snowflake
+.snowsql/
+
+# Temporários
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+
+# Arquivos do macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
