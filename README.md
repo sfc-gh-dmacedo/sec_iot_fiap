@@ -1,368 +1,327 @@
-# Demo de Segurança em IoT - AWS IoT Core + Snowflake
-## MBA FIAP - Demonstração de Segurança em Internet das Coisas
+# Demo de Segurança em IoT - AWS IoT Core
+## Projeto MBA FIAP - Demonstração de Autenticação mTLS e Políticas Granulares
 
 ---
 
-## 📋 Visão Geral
+## 🎯 Visão Geral
 
-Esta demonstração foca nos aspectos de **segurança em IoT** utilizando:
-- **AWS IoT Core** - Plataforma gerenciada de IoT da AWS
-- **Snowflake Notebooks** - Para execução do código Python de demonstração
-- **Protocolo MQTT sobre TLS** - Comunicação segura
-- **Certificados X.509** - Autenticação mútua
+Este projeto demonstra **6 conceitos fundamentais de segurança em IoT** através de uma demo prática usando AWS IoT Core, certificados X.509 e autenticação mútua (mTLS).
 
-### Conceitos de Segurança Demonstrados:
-1. **Autenticação Mútua TLS (mTLS)** - Cliente e servidor se autenticam
-2. **Certificados X.509** - Identidade digital dos dispositivos
-3. **Políticas IoT (IoT Policies)** - Controle de acesso granular
-4. **Criptografia em Trânsito** - Dados criptografados via TLS 1.2+
-5. **Princípio do Menor Privilégio** - Permissões mínimas necessárias
-6. **Segregação de Acesso** - Diferentes níveis de permissão por dispositivo
+**Plataforma**: Jupyter Notebook Local  
+**Cloud**: AWS IoT Core  
+**Linguagem**: Python 3.x  
+**Biblioteca MQTT**: paho-mqtt  
+**Duração da Demo**: ~14 minutos
 
 ---
 
-## 🎯 Pré-requisitos
+## 🔐 Conceitos de Segurança Demonstrados
 
-### 1. Conta AWS
-- Conta AWS ativa (pode usar Free Tier)
-- Acesso ao console AWS
-- Permissões para criar recursos no AWS IoT Core
+1. **Criptografia TLS 1.2+** - Proteção de dados em trânsito
+2. **Autenticação Mútua (mTLS)** - Cliente e servidor validam-se mutuamente
+3. **Certificados X.509** - Identidade digital baseada em PKI
+4. **Políticas IoT Granulares** - Controle fino de acesso por tópico
+5. **Princípio do Menor Privilégio** - Mínimas permissões necessárias
+6. **Validação Obrigatória** - Sem exceções de segurança
 
-### 2. AWS CLI Instalado
-```bash
-# MacOS
-brew install awscli
+---
 
-# Configurar credenciais
-aws configure
+## 📁 Estrutura do Projeto
+
+```
+sec_iot_fiap/
+│
+├── 📘 COMECE_AQUI.md                      # ⭐ Ponto de entrada
+├── 📘 README.md                           # Este arquivo
+│
+├── 🚀 SETUP
+│   ├── SETUP_VIA_CONSOLE_AWS.md           # Setup AWS IoT via Console
+│   └── SETUP_JUPYTER_LOCAL.md             # Setup Jupyter Notebook
+│
+├── 🎤 GUIAS DE APRESENTAÇÃO
+│   ├── INDICE_APRESENTACAO.md             # ⭐ Índice master - comece aqui!
+│   ├── GUIA_APRESENTACAO_DETALHADO.md     # Explicação célula por célula
+│   ├── SCRIPTS_APRESENTACAO.md            # O que falar (decore!)
+│   └── GUIA_VISUAL_APRESENTACAO.md        # Onde clicar e validar na AWS
+│
+├── 📚 CONCEITOS
+│   └── CONCEITOS_SEGURANCA.md             # Teoria detalhada
+│
+├── 🐍 CÓDIGO
+│   └── demo_jupyter_local.py              # Demo completa (11 células)
+│
+├── 🔐 CERTIFICADOS
+│   ├── aws_iot_certs/                     # Pasta para certificados AWS
+│   │   └── config.txt                     # Informações de configuração
+│   └── policy_iot.json                    # Política IoT do projeto
+│
+└── 📄 .gitignore                          # Proteção de arquivos sensíveis
 ```
 
-### 3. Snowflake
-- Conta Snowflake ativa
-- Acesso a Notebooks (Snowpark)
-- Permissões para criar stages e executar notebooks
-
-### 4. Ferramentas Locais (para setup)
-- Python 3.8+ instalado localmente (apenas para setup inicial)
-- Terminal/Shell access
-
 ---
 
-## 🚀 Parte 1: Configuração na AWS
+## 🚀 Quick Start
 
-### ⚠️ IMPORTANTE: Escolha Seu Método de Setup
-
-**Você tem 2 opções:**
-
-#### Opção A: Setup Automático (COM acesso ao AWS CLI)
-- Use o script: `./setup_aws_iot.sh`
-- Mais rápido (~5 minutos)
-- Veja instruções abaixo
-
-#### Opção B: Setup Manual (SEM acesso ao AWS CLI - APENAS Console Web)
-- 📘 **Siga o guia completo**: `SETUP_VIA_CONSOLE_AWS.md`
-- Mais detalhado (~30 minutos)
-- Passo a passo com interface web
-
----
-
-### Opção A: Setup com AWS CLI
-
-### Passo 1: Obter o Endpoint do AWS IoT
+### 1️⃣ Primeiro Acesso
 
 ```bash
-# Obter o endpoint único da sua conta AWS IoT
-aws iot describe-endpoint --endpoint-type iot:Data-ATS
+# 1. Clone ou navegue até o diretório
+cd /Users/dmacedo/Documents/Codes/Projects/sec_iot_fiap
+
+# 2. Leia o guia de entrada
+cat COMECE_AQUI.md
 ```
 
-Anote o endpoint retornado (formato: `XXXXXX-ats.iot.REGION.amazonaws.com`)
+### 2️⃣ Setup AWS IoT Core (Console)
 
-### Passo 2: Criar Certificados e Chaves
-
-Execute os comandos abaixo para criar certificados para dispositivos:
+Siga o guia passo a passo:
 
 ```bash
-# Criar diretório para certificados
-mkdir -p aws_iot_certs
-
-# Criar certificado para dispositivo "sensor-01"
-aws iot create-keys-and-certificate \
-  --set-as-active \
-  --certificate-pem-outfile aws_iot_certs/sensor-01-certificate.pem.crt \
-  --public-key-outfile aws_iot_certs/sensor-01-public.pem.key \
-  --private-key-outfile aws_iot_certs/sensor-01-private.pem.key
-
-# Salvar o certificateArn retornado - você precisará dele
+cat SETUP_VIA_CONSOLE_AWS.md
 ```
 
-**IMPORTANTE**: Anote o `certificateArn` retornado. Exemplo:
-```
-arn:aws:iot:us-east-1:123456789012:cert/abc123...
-```
+**Você vai criar**:
+- ✅ Thing: `sensor-01-secure`
+- ✅ Certificado X.509 (baixar 3 arquivos)
+- ✅ Política: `SecureIoTDemoPolicy`
+- ✅ Anexar política ao certificado e Thing
 
-### Passo 3: Baixar o Certificado Root da AWS
+### 3️⃣ Setup Jupyter Notebook Local
+
+Siga o guia:
 
 ```bash
-# Download do certificado raiz da Amazon (AmazonRootCA1)
-curl -o aws_iot_certs/AmazonRootCA1.pem \
-  https://www.amazontrust.com/repository/AmazonRootCA1.pem
+cat SETUP_JUPYTER_LOCAL.md
 ```
 
-### Passo 4: Criar Política IoT (IoT Policy)
+**Você vai**:
+- ✅ Instalar Python e Jupyter
+- ✅ Instalar biblioteca `paho-mqtt`
+- ✅ Copiar certificados para pasta `certs/`
+- ✅ Atualizar endpoint no código
+- ✅ Executar demo
 
-Esta política define o que o dispositivo pode fazer. Crie um arquivo JSON:
+### 4️⃣ Preparar Apresentação
 
-```bash
-cat > aws_iot_certs/iot-policy-secure.json <<'EOF'
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "iot:Connect"
-      ],
-      "Resource": [
-        "arn:aws:iot:REGION:ACCOUNT_ID:client/sensor-*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "iot:Publish"
-      ],
-      "Resource": [
-        "arn:aws:iot:REGION:ACCOUNT_ID:topic/iot/security/demo/*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "iot:Subscribe"
-      ],
-      "Resource": [
-        "arn:aws:iot:REGION:ACCOUNT_ID:topicfilter/iot/security/demo/*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "iot:Receive"
-      ],
-      "Resource": [
-        "arn:aws:iot:REGION:ACCOUNT_ID:topic/iot/security/demo/*"
-      ]
-    }
-  ]
-}
-EOF
-```
-
-**Substitua REGION e ACCOUNT_ID** pelos seus valores:
-- REGION: sua região AWS (ex: us-east-1)
-- ACCOUNT_ID: seu ID da conta AWS (12 dígitos)
+**Leia os 4 guias de apresentação** (nesta ordem):
 
 ```bash
-# Criar a política no AWS IoT
-aws iot create-policy \
-  --policy-name SecureIoTDemoPolicy \
-  --policy-document file://aws_iot_certs/iot-policy-secure.json
-```
+# 1. Índice e plano de estudos (3 dias)
+cat INDICE_APRESENTACAO.md
 
-### Passo 5: Anexar Política ao Certificado
+# 2. Entenda cada célula tecnicamente
+cat GUIA_APRESENTACAO_DETALHADO.md
 
-```bash
-# Substituir CERTIFICATE_ARN pelo ARN anotado no Passo 2
-aws iot attach-policy \
-  --policy-name SecureIoTDemoPolicy \
-  --target "CERTIFICATE_ARN"
-```
+# 3. Decore o que falar
+cat SCRIPTS_APRESENTACAO.md
 
-### Passo 6: Criar uma Thing (Coisa/Dispositivo)
-
-```bash
-# Criar a Thing
-aws iot create-thing --thing-name sensor-01-secure
-
-# Anexar certificado à Thing
-aws iot attach-thing-principal \
-  --thing-name sensor-01-secure \
-  --principal "CERTIFICATE_ARN"
+# 4. Aprenda onde clicar/validar
+cat GUIA_VISUAL_APRESENTACAO.md
 ```
 
 ---
 
-## 📊 Parte 2: Configuração no Snowflake
+## 🎬 A Demonstração
 
-### Passo 1: Criar Database e Schema
+### Estrutura (11 Células)
 
-```sql
--- No Snowflake Worksheet
-CREATE DATABASE IF NOT EXISTS IOT_SECURITY_DEMO;
-CREATE SCHEMA IF NOT EXISTS IOT_SECURITY_DEMO.DEMO;
-USE SCHEMA IOT_SECURITY_DEMO.DEMO;
+```
+Célula 1    → Imports
+Célula 2    → Configuração (endpoint, caminhos)
+Célula 3    → Instalar paho-mqtt
+Célula 4    → Configurar callbacks MQTT
+Célula 5    → ⭐ Configurar TLS/mTLS
+Célula 6    → ⭐ Conectar ao AWS IoT Core
+Célula 7    → ✅ Teste 1: Tópico PERMITIDO
+Célula 8    → ⭐⭐⭐ Teste 2: Tópico NEGADO (momento-chave!)
+Célula 9    → ✅ Teste 3: Subscribe/Receive
+Célula 10   → Resumo dos conceitos
+Célula 11   → Desconectar
 ```
 
-### Passo 2: Criar Stage para Certificados
+### Momento-Chave: Célula 8 🔥
 
-```sql
--- Criar stage interno para armazenar certificados
-CREATE OR REPLACE STAGE IOT_CERTS_STAGE
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-```
+**A Célula 8** é o coração da apresentação! Demonstra o **Princípio do Menor Privilégio**:
 
-### Passo 3: Upload dos Certificados
+- Tenta publicar em tópico fora do escopo autorizado
+- **Resultado**: ❌ BLOQUEADO pela política IoT
+- **Mensagem**: Mesmo com autenticação válida, operação é negada
+- **Validação na AWS**: Nenhuma mensagem aparece no MQTT Test Client
 
-Você precisa fazer upload dos certificados para o stage. Use SnowSQL ou Snowsight:
-
-```bash
-# Usando SnowSQL (ajuste o passphrase conforme sua configuração)
-export SNOWSQL_PRIVATE_KEY_PASSPHRASE="[seu_passphrase]"
-
-# Upload dos certificados
-snowsql -d IOT_SECURITY_DEMO -s DEMO -q "
-PUT file://aws_iot_certs/sensor-01-certificate.pem.crt @IOT_CERTS_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file://aws_iot_certs/sensor-01-private.pem.key @IOT_CERTS_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-PUT file://aws_iot_certs/AmazonRootCA1.pem @IOT_CERTS_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-"
-```
-
-**Alternativa via Snowsight UI:**
-1. Navegue até Data > Databases > IOT_SECURITY_DEMO > DEMO > Stages > IOT_CERTS_STAGE
-2. Clique em "+ Files" e faça upload dos 3 arquivos
-
-### Passo 4: Criar Tabela para Configuração
-
-```sql
--- Tabela para armazenar configurações (endpoint, etc)
-CREATE OR REPLACE TABLE IOT_CONFIG (
-  CONFIG_KEY VARCHAR,
-  CONFIG_VALUE VARCHAR,
-  DESCRIPTION VARCHAR
-);
-
--- Inserir configurações (AJUSTE SEU ENDPOINT)
-INSERT INTO IOT_CONFIG VALUES 
-  ('AWS_IOT_ENDPOINT', 'XXXXXX-ats.iot.REGION.amazonaws.com', 'AWS IoT Core endpoint'),
-  ('AWS_REGION', 'us-east-1', 'AWS Region'),
-  ('CERT_PATH', '@IOT_CERTS_STAGE/sensor-01-certificate.pem.crt', 'Certificado do dispositivo'),
-  ('KEY_PATH', '@IOT_CERTS_STAGE/sensor-01-private.pem.key', 'Chave privada'),
-  ('ROOT_CA_PATH', '@IOT_CERTS_STAGE/AmazonRootCA1.pem', 'Root CA Amazon');
-```
+**Isso demonstra que**:
+- Autenticação ≠ Autorização ilimitada
+- Dispositivo comprometido = dano limitado
+- Controle granular funciona!
 
 ---
 
-## 🔐 Parte 3: Executar a Demonstração
+## 🎯 Validação na AWS Console
 
-### Abrir o Notebook
+### Durante a Demo
 
-1. No Snowflake, navegue até **Projects > Notebooks**
-2. Crie um novo notebook Python
-3. Conecte ao database `IOT_SECURITY_DEMO` e schema `DEMO`
-4. Copie e execute o código do arquivo `iot_security_demo.ipynb`
+**Abra antes de apresentar:**
 
-### O que a Demo Demonstra
+1. **AWS Console** > IoT Core > Test > **MQTT test client**
+2. Subscribe to topic: `#` (captura tudo)
+3. Deixe visível durante toda apresentação
 
-A demonstração cobre os seguintes aspectos de segurança:
+**Validações em tempo real:**
 
-1. **Conexão Segura com mTLS**
-   - Autenticação bidirecional usando certificados X.509
-   - Validação de identidade do cliente e servidor
-
-2. **Testes de Autorização**
-   - Tentativa de publicar em tópico permitido ✅
-   - Tentativa de publicar em tópico negado ❌
-   - Demonstra o princípio do menor privilégio
-
-3. **Criptografia de Dados**
-   - Todo tráfego via TLS 1.2+
-   - Dados sensíveis criptografados em trânsito
-
-4. **Auditoria e Monitoramento**
-   - Logs de conexão e atividades
-   - Shadow documents para estado dos dispositivos
+| Célula | Código | AWS Console (MQTT Test Client) | Resultado |
+|--------|--------|--------------------------------|-----------|
+| 7 | Publica em `iot/security/demo/sensor01/temperature` | ✅ **Mensagem APARECE** | Autorizado ✅ |
+| 8 | Tenta publicar em `iot/production/data` | ❌ **Nenhuma mensagem** | Bloqueado ✅ |
+| 9 | Publica em `iot/security/demo/sensor01/commands` | ✅ **Mensagem APARECE** | Autorizado ✅ |
 
 ---
 
-## 📚 Conceitos de Segurança Explicados
+## 📚 Documentação Completa
 
-### 1. Autenticação Mútua TLS (mTLS)
-- **Cliente autentica servidor**: Valida certificado da AWS
-- **Servidor autentica cliente**: Valida certificado do dispositivo
-- **Benefício**: Garante que ambas as partes são quem dizem ser
+### Setup Inicial
+- `COMECE_AQUI.md` - Ponto de entrada do projeto
+- `SETUP_VIA_CONSOLE_AWS.md` - Criar recursos AWS (passo a passo)
+- `SETUP_JUPYTER_LOCAL.md` - Configurar ambiente local
 
-### 2. Certificados X.509
-- **Padrão internacional** para identidade digital
-- **Contém**: Chave pública, identidade, assinatura digital
-- **Único por dispositivo**: Cada IoT tem seu próprio certificado
+### Guias de Apresentação
+- `INDICE_APRESENTACAO.md` - ⭐ Índice master + plano de estudos
+- `GUIA_APRESENTACAO_DETALHADO.md` - O que cada célula faz + validações
+- `SCRIPTS_APRESENTACAO.md` - O que falar (scripts prontos)
+- `GUIA_VISUAL_APRESENTACAO.md` - Setup de telas + quando mostrar AWS
 
-### 3. Políticas de Acesso Granular
-- **Baseadas em JSON**: Definem permissões detalhadas
-- **Recursos específicos**: Controla tópicos MQTT permitidos
-- **Ações limitadas**: Connect, Publish, Subscribe, Receive
-
-### 4. Princípio do Menor Privilégio
-- Dispositivos só têm permissões estritamente necessárias
-- Reduz superfície de ataque em caso de comprometimento
-
-### 5. Segregação por Tópicos
-- Diferentes dispositivos acessam diferentes tópicos
-- Impede que um dispositivo comprometido acesse dados de outros
+### Conceitos Teóricos
+- `CONCEITOS_SEGURANCA.md` - Teoria de segurança em IoT
 
 ---
 
-## 🛡️ Melhores Práticas de Segurança Demonstradas
+## 🔧 Tecnologias
 
-1. ✅ **Nunca compartilhar chaves privadas** - Cada dispositivo tem a sua
-2. ✅ **Rotação de certificados** - Política de renovação periódica
-3. ✅ **Monitoramento contínuo** - AWS IoT Device Defender
-4. ✅ **Criptografia em repouso** - Certificados criptografados no Snowflake
-5. ✅ **Validação de identidade** - mTLS obrigatório
-6. ✅ **Políticas restritivas** - Permissões mínimas necessárias
+### Cloud
+- **AWS IoT Core** - Plataforma IoT gerenciada
+- **AWS IAM** - Gerenciamento de certificados
 
----
+### Protocolos
+- **MQTT** - Protocolo de mensagens IoT
+- **TLS 1.2** - Criptografia de transporte
 
-## 🧹 Limpeza de Recursos (Após a Demo)
+### Segurança
+- **mTLS** - Autenticação mútua
+- **X.509** - Certificados digitais
+- **PKI** - Infraestrutura de chave pública
 
-Para evitar custos, delete os recursos criados:
-
-```bash
-# Detach política do certificado
-aws iot detach-policy --policy-name SecureIoTDemoPolicy --target "CERTIFICATE_ARN"
-
-# Detach certificado da thing
-aws iot detach-thing-principal --thing-name sensor-01-secure --principal "CERTIFICATE_ARN"
-
-# Desativar e deletar certificado
-aws iot update-certificate --certificate-id CERT_ID --new-status INACTIVE
-aws iot delete-certificate --certificate-id CERT_ID --force-delete
-
-# Deletar thing
-aws iot delete-thing --thing-name sensor-01-secure
-
-# Deletar política
-aws iot delete-policy --policy-name SecureIoTDemoPolicy
-```
-
-No Snowflake:
-```sql
-DROP DATABASE IOT_SECURITY_DEMO;
-```
+### Desenvolvimento
+- **Python 3.x** - Linguagem de programação
+- **paho-mqtt** - Cliente MQTT para Python
+- **Jupyter Notebook** - Ambiente interativo
 
 ---
 
-## 📖 Referências
+## ⚠️ Segurança e Boas Práticas
 
-- [AWS IoT Core Security Best Practices](https://docs.aws.amazon.com/iot/latest/developerguide/security-best-practices.html)
-- [X.509 Certificates and AWS IoT](https://docs.aws.amazon.com/iot/latest/developerguide/x509-client-certs.html)
-- [MQTT Protocol Specification](https://mqtt.org/mqtt-specification/)
-- [TLS/SSL Protocol](https://www.ssl.com/faqs/what-is-ssl/)
+### Certificados
+- ✅ **NUNCA** commit certificados no Git (`.gitignore` configurado)
+- ✅ Armazene em pasta `certs/` (ignorada pelo Git)
+- ✅ Rotacione certificados periodicamente
+
+### Políticas IoT
+- ✅ Use **princípio do menor privilégio**
+- ✅ Defina escopos específicos (não use `*` em produção)
+- ✅ Revise políticas regularmente
+
+### Credenciais AWS
+- ✅ **NUNCA** hardcode credenciais no código
+- ✅ Use variáveis de ambiente ou arquivos de config
+- ✅ Proteja arquivos de config (`chmod 600`)
 
 ---
 
-## 📧 Suporte
+## 🎓 Para o Avaliador MBA FIAP
 
-Para dúvidas sobre esta demonstração, consulte a documentação oficial da AWS IoT Core e Snowflake.
+### Este Projeto Demonstra
 
-**Boa apresentação no MBA FIAP! 🎓**
+✅ **Compreensão de Segurança em IoT**
+- Autenticação forte (mTLS com X.509)
+- Autorização granular (políticas IoT por tópico)
+- Criptografia em trânsito (TLS 1.2+)
+- Princípio do menor privilégio
 
+✅ **Implementação Prática**
+- Código funcional e bem documentado
+- Validação em tempo real no AWS Console
+- Demonstração de cenário positivo (permitido) e negativo (bloqueio)
+
+✅ **Documentação Completa**
+- Guias de setup detalhados
+- Scripts de apresentação prontos
+- Conceitos teóricos explicados
+- Validações passo a passo
+
+✅ **Uso de Serviços AWS**
+- AWS IoT Core (Thing, Certificate, Policy)
+- AWS Root CA para validação
+- MQTT sobre TLS (porta 8883)
+
+---
+
+## 📞 Contato
+
+**Projeto**: Demo IoT Security - MBA FIAP  
+**Plataforma**: AWS IoT Core + Jupyter Notebook Local  
+**Status**: ✅ Pronto para apresentação
+
+---
+
+## 📄 Licença
+
+Este projeto é para fins educacionais (MBA FIAP).
+
+---
+
+## 🚀 Próximos Passos
+
+### Antes da Apresentação
+
+1. ✅ Leia `INDICE_APRESENTACAO.md` - Plano de estudos de 3 dias
+2. ✅ Execute setup completo
+3. ✅ Teste demo 2-3 vezes
+4. ✅ **DECORE** script da Célula 8 (momento-chave!)
+5. ✅ Configure AWS MQTT Test Client
+6. ✅ Tire screenshots de backup
+
+### Durante Apresentação
+
+1. ✅ Jupyter Notebook (tela principal)
+2. ✅ AWS Console MQTT Test Client (tela secundária)
+3. ✅ Siga scripts preparados
+4. ✅ Mostre validações visuais nas Células 7 e 8
+5. ✅ Enfatize: bloqueio é **vitória**, não falha!
+
+---
+
+## ✨ Mensagem Final
+
+> **O bloqueio da Célula 8 não é uma falha - é uma vitória!**
+>
+> É a demonstração perfeita do Princípio do Menor Privilégio em ação.
+> 
+> Se você conseguir transmitir essa ideia com entusiasmo, sua apresentação será um sucesso!
+
+**Boa sorte no MBA FIAP! 🎓🔐🚀**
+
+---
+
+## 📋 Checklist Final
+
+Você está pronto para apresentar quando:
+
+- [ ] AWS IoT Thing criado e ativo
+- [ ] Certificados baixados e na pasta `certs/`
+- [ ] Política IoT permite `iot/security/demo/*`
+- [ ] Jupyter Notebook e `paho-mqtt` instalados
+- [ ] Demo testada e funcionando
+- [ ] Lido `GUIA_APRESENTACAO_DETALHADO.md` 2x
+- [ ] **DECORADO** script da Célula 8
+- [ ] AWS MQTT Test Client configurado
+- [ ] Screenshots de backup salvos
+- [ ] Confiante e animado! 💪
+
+**Você consegue! 🚀**

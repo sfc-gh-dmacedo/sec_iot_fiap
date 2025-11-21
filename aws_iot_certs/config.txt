@@ -1,0 +1,13 @@
+=== CONFIGURAÇÃO AWS IoT ===
+
+Endpoint: a3c296xgcw33c7-ats.iot.us-east-1.amazonaws.com
+Region: us-east-1
+Account ID: 484577546576
+Thing Name: sensor-01-secure
+Client ID: sensor-01
+Certificate ARN: arn:aws:iot:us-east-1:484577546576:cert/383962d3f693fbb5012018d7b6d0f49794494143cfa3e4bde582fb7dc2b821ca
+
+Política: SecureIoTDemoPolicy
+Certificado: sensor-01-certificate.pem.crt
+Chave Privada: sensor-01-private.pem.key
+Root CA: AmazonRootCA1.pem

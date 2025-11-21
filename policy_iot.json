@@ -1,0 +1,41 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Connect"
+      ],
+      "Resource": [
+        "arn:aws:iot:us-east-1:484577546576:cert/383962d3f693fbb5012018d7b6d0f49794494143cfa3e4bde582fb7dc2b821ca:client/sensor-*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Publish"
+      ],
+      "Resource": [
+        "arn:aws:iot:us-east-1:484577546576:cert/383962d3f693fbb5012018d7b6d0f49794494143cfa3e4bde582fb7dc2b821ca:topic/iot/security/demo/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Subscribe"
+      ],
+      "Resource": [
+        "arn:aws:iot:us-east-1:484577546576:cert/383962d3f693fbb5012018d7b6d0f49794494143cfa3e4bde582fb7dc2b821ca:topicfilter/iot/security/demo/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iot:Receive"
+      ],
+      "Resource": [
+        "arn:aws:iot:us-east-1:484577546576:cert/383962d3f693fbb5012018d7b6d0f49794494143cfa3e4bde582fb7dc2b821ca:topic/iot/security/demo/*"
+      ]
+    }
+  ]
+}

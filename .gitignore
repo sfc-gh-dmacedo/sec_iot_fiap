@@ -1,75 +1,97 @@
-# Certificados e Chaves (NUNCA commitar!)
-aws_iot_certs/
+# ============================================================================
+# .gitignore - Demo IoT Security AWS
+# ============================================================================
+
+# ============================
+# CERTIFICADOS AWS (CRÍTICO!)
+# ============================
+# NUNCA commit certificados no Git!
+certs/
+aws_iot_certs/*.pem
+aws_iot_certs/*.crt
+aws_iot_certs/*.key
 *.pem
 *.crt
 *.key
-*.p12
-*.pfx
 
-# Configurações sensíveis
-*config*.txt
-*secret*
-*password*
+# ============================
+# CONFIGURAÇÕES SENSÍVEIS
+# ============================
+config.json
+credentials.json
 .env
 .env.local
+secrets/
 
-# Python
+# ============================
+# PYTHON
+# ============================
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 
 # Virtual environments
 venv/
-ENV/
 env/
+ENV/
 .venv
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
 *.ipynb_checkpoints
+Untitled*.ipynb
 
-# IDEs
-.vscode/
+# PyCharm
 .idea/
-*.swp
-*.swo
-*~
-.DS_Store
 
-# Logs
-*.log
-logs/
+# VS Code
+.vscode/
+*.code-workspace
 
-# Snowflake
-.snowsql/
-
-# Temporários
-tmp/
-temp/
-*.tmp
-*.bak
-*.backup
-
-# Arquivos do macOS
+# ============================
+# SISTEMA OPERACIONAL
+# ============================
+# macOS
 .DS_Store
 .AppleDouble
 .LSOverride
-._*
 
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================
+# LOGS E TEMPORÁRIOS
+# ============================
+*.log
+*.tmp
+temp/
+tmp/
+
+# ============================
+# BACKUPS
+# ============================
+*.bak
+*.backup
+backup/
+
+# ============================
+# ARQUIVOS DE TESTE
+# ============================
+test_*.py
+*_test.py
+scratch/
+sandbox/
+
+# ============================
+# KEEP FILES (Exceções)
+# ============================
+# Manter config.txt de exemplo (sem dados sensíveis)
+!aws_iot_certs/config.txt
+
+# Manter policy de exemplo
+!policy_iot.json
